@@ -76,7 +76,7 @@ jobs:
         args: --release --no-sdist -o dist
 
     - name: install locally built wheel
-      run: pip install --user --find-links=dist --force-reinstall
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
 
     - name: run doctests
       run: python -m doctest -v README.md
