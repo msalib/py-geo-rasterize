@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: cargo bloat
+      uses: orf/cargo-bloat-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        bloat_args: -n 50
+
+    - name: maturin build
+      uses: messense/maturin-action@v1
+      with:
+        manylinux: manylinux2014
+        command: build
+        args: --release --strip -o dist
+
+    - name: install locally built wheel
+      run: pip install geo-rasterize --no-index --find-links dist --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+
+  # windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: messense/maturin-action@v1
+  #     with:
+  #       command: build
+  #       args: --release --no-sdist -o dist
+  #   - name: Upload wheels
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: wheels
+  #       path: dist
+
+  # macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: messense/maturin-action@v1
+  #     with:
+  #       command: build
+  #       args: --release --no-sdist -o dist --universal2
+  #   - name: Upload wheels
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: wheels
+  #       path: dist
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [ linux ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: wheels
+      - name: Publish to PyPI
+        uses: messense/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --repository-url https://test.pypi.org/legacy/ -u msalib --skip-existing *
+
+
