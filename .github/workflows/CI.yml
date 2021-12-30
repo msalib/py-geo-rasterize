@@ -102,6 +102,6 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --repository-url https://test.pypi.org/legacy/ -u msalib --skip-existing *
+          args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
 
 
