@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2021-12-30)
+### Feature
+* More CI fun ([#13](https://github.com/msalib/py-geo-rasterize/issues/13)) ([`a2c69ab`](https://github.com/msalib/py-geo-rasterize/commit/a2c69abd218f2a7e8b395f1873d237185cd18355))
+
 ## v0.6.0 (2021-12-30)
 ### Feature
 * Whatever again ([#12](https://github.com/msalib/py-geo-rasterize/issues/12)) ([`127c872`](https://github.com/msalib/py-geo-rasterize/commit/127c87266b21c2b5948d7b6f473f88c7828087b0))
