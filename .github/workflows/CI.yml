@@ -6,102 +6,35 @@ on:
   pull_request:
     branches: [ main ]
 
-
-env:
-  CARGO_TERM_COLOR: always
-  # https://matklad.github.io/2021/09/04/fast-rust-builds.html
-  # indicates that non-incremental builds improve CI performance.
-  CARGO_INCREMENTAL: 0
-  # Since we're not shipping any build artifacts, turning off debug
-  # symbols will speed things up without hurting anything.
-  RUSTFLAGS: '-C debuginfo=0'
-
 jobs:
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
 
-    - uses: actions-rs/clippy-check@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-features
+  build:
+    name: Build
+    uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
+    with:
+      ref: ${{ env.GITHUB_REF_NAME }}
 
-    # Looks like cargo-bloat-action won't be working for us anytime
-    # soon unfortunately....
-    # - name: cargo bloat
-    #   uses: orf/cargo-bloat-action@v1
-    #   with:
-    #     token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: maturin build
-      uses: messense/maturin-action@v1
-      with:
-        manylinux: manylinux2014
-        command: build
-        args: --release --strip -o dist
-
-    # - name: install dependencies
-    #   run: pip install --user numpy>=1.16 shapely>=1.6
-
-    # - name: install locally built wheel
-    #   run: pip install --user geo-rasterize --no-index --find-links dist --force-reinstall
-
-    - name: install locally built wheel
-      run: pip install --user dist/*.whl --force-reinstall
-
-    - name: run doctests
-      run: python -m doctest -v README.md
-
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
-
-  # windows:
-  #   runs-on: windows-latest
+  # release:
+  #   name: Release
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   needs: [ linux, windows, macos ]
   #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: messense/maturin-action@v1
-  #     with:
-  #       command: build
-  #       args: --release --no-sdist -o dist
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
-
-  # macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: messense/maturin-action@v1
-  #     with:
-  #       command: build
-  #       args: --release --no-sdist -o dist --universal2
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
-
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [ linux ]
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: wheels
-      - name: Publish to PyPI
-        uses: messense/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        with:
-          command: upload
-          args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: wheels
+  #     - name: Publish to PyPI
+  #       uses: messense/maturin-action@v1
+  #       env:
+  #         MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+  #       with:
+  #         command: upload
+  #         args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
 
 
+
+# put release in a separate file consisting of a python-semantic-release version job that outputs a ref followed by parallel build jobs for each platform followed by the upload job
+
+# encapsulate build flow into its own file with input ref that defaults to current branch
+# then we have a separate build that invokes it on push in a build job along with a release job t

@@ -1,14 +1,10 @@
 # geo-rasterize: a 2D rasterizer for geospatial applications, written in Rust
 
-[![Crates.io][crates-badge]][crates-url]
-<!-- [![CodeCov.io][codecov-badge]][codecov-url] -->
+[![PyPI][pypi-badge]][pypi-url]
 [![Build Status][actions-badge]][actions-url]
 
-<!-- add pypi badge first -->
-[crates-badge]: https://img.shields.io/crates/v/py-geo-rasterize.svg
-[crates-url]: https://crates.io/crates/py-geo-rasterize
-[codecov-badge]: https://img.shields.io/codecov/c/github/msalib/py-geo-rasterize
-[codecov-url]: https://app.codecov.io/gh/msalib/py-geo-rasterize/
+[pypi-badge]: https://img.shields.io/pypi/pyversions/geo-rasterize
+[pypi-url]: https://pypi.org/project/geo-rasterize/
 [actions-badge]: https://github.com/msalib/py-geo-rasterize/actions/workflows/CI.yml/badge.svg
 [actions-url]: https://github.com/msalib/py-geo-rasterize/actions?query=CI+branch%3Amain
 
@@ -25,6 +21,8 @@ at all)! Plus `geo-rasterize`'s rasterization algorithm is based on
 GDAL's so it should be a drop in replacement for
 `rasterio.features.rasterize` and it offers a very similar API.
 
+<!-- add table showing platforms and build statuses -->
+
 ## Examples
 
 For example, let's rasterize a single `Point` located at `(x=1, y=2)`
@@ -35,13 +33,13 @@ every pixel the point touches:
 ```python
 >>> from shapely.geometry import Point
 >>> from geo_rasterize import rasterize
->>> rasterize([Point(1, 2)], [1], (5, 6))
-array([[0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0]])
+>>> print(rasterize([Point(1, 2)], [1], (5, 6)))
+[[0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 1 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]]
 
 ```
 
@@ -55,12 +53,15 @@ So let's see multiple shapes!
 ```python
 >>> from shapely.geometry import Point, LineString
 >>> from geo_rasterize import rasterize
->>> rasterize([Point(3, 4), LineString([(0, 3), (3, 0)])], [3, 7], (4, 5))
-array([[0, 0, 7, 0],
-       [0, 7, 7, 0],
-       [7, 7, 0, 0],
-       [7, 0, 0, 0],
-       [0, 0, 0, 3]])
+>>> shapes = [Point(3, 4), LineString([(0, 3), (3, 0)])]
+>>> foregrounds = [3, 7]
+>>> raster_size = (4, 5)
+>>> print(rasterize(shapes, foregrounds, raster_size))
+[[0 0 7 0]
+ [0 7 7 0]
+ [7 7 0 0]
+ [7 0 0 0]
+ [0 0 0 3]]
 
 ```
 
@@ -74,12 +75,12 @@ foreground values will sum. That allows you to make heatmaps!
 >>> from shapely.geometry import Point, LineString
 >>> from geo_rasterize import rasterize
 >>> shapes = [LineString([(0, 0), (5, 5)]), LineString([(5, 0), (0, 5)])]
->>> rasterize(shapes, [1, 1], (5, 5), algorithm='add')
-array([[1, 0, 0, 0, 1],
-       [0, 1, 0, 1, 1],
-       [0, 0, 2, 1, 0],
-       [0, 1, 1, 1, 0],
-       [1, 1, 0, 0, 1]])
+>>> print(rasterize(shapes, [1, 1], (5, 5), algorithm='add'))
+[[1 0 0 0 1]
+ [0 1 0 1 1]
+ [0 0 2 1 0]
+ [0 1 1 1 0]
+ [1 1 0 0 1]]
 
 ```
 
