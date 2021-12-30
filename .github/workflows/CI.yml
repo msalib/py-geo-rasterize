@@ -114,7 +114,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: msalib/py-geo-rasterize/./.github/workflows/build.yml
+      - uses: msalib/py-geo-rasterize/./.github/workflows/build.yml@v1
         with:
           ref: ${{ env.GITHUB_REF_NAME }}
 
