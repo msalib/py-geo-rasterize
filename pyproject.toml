@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "geo-rasterize"
-version = "0.0.2"
+version = "0.1.0"
 description = "a 2D rasterizer for geospatial applications, written in Rust"
 readme = "README.md"
 license = {file = "LICENSE-APACHE"}
