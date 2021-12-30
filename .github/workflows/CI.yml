@@ -27,11 +27,12 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-features
 
-    - name: cargo bloat
-      uses: orf/cargo-bloat-action@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        bloat_args: -n 50
+    # Looks like cargo-bloat-action won't be working for us anytime
+    # soon unfortunately....
+    # - name: cargo bloat
+    #   uses: orf/cargo-bloat-action@v1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: maturin build
       uses: messense/maturin-action@v1
