@@ -8,14 +8,38 @@ on:
 
 jobs:
 
+  # This runs all the time except when we're pushing to main; we've
+  # already run tests in the PR and after we increment the semantic
+  # release number, we're going to run tests on that commit anyway so
+  # there's no point to run tests a third time.
   Build:
+    if: !( github.ref == 'refs/heads/main' && github.event_name == 'push' )
     uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
     with:
       ref: ${GITHUB_REF_NAME}
 
-  Release:
+  # This only runs when we push to main. Instead of running tests, we
+  # bump the version and make a tag.
+  BumpVersion:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Python Semantic Release
+        uses: relekang/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: git push
+
+  # We've got a new version! `Build` will run and after it finishes we
+  # can publish!
+  Publish:
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
     needs: [ Build ]
     steps:
       - uses: actions/download-artifact@v2
@@ -28,10 +52,3 @@ jobs:
         with:
           command: upload
           args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
-
-
-
-# put release in a separate file consisting of a python-semantic-release version job that outputs a ref followed by parallel build jobs for each platform followed by the upload job
-
-# encapsulate build flow into its own file with input ref that defaults to current branch
-# then we have a separate build that invokes it on push in a build job along with a release job t

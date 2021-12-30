@@ -31,3 +31,8 @@ dependencies = [
 homepage = "https://github.com/msalib/py-geo-rasterize"
 
 
+[tool.semantic_release]
+branch = "main"
+version_toml = "pyproject.toml:project.version"
+upload_to_pypi = false
+upload_to_repository = false
