@@ -11,8 +11,7 @@ jobs:
   Build:
     uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
     with:
-      ref: ${{ env.GITHUB_REF_NAME }}
-
+      ref: ${GITHUB_REF_NAME}
 
   Release:
     runs-on: ubuntu-latest
