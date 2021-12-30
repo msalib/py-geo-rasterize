@@ -1,7 +1,7 @@
 # geo-rasterize: a 2D rasterizer for geospatial applications, written in Rust
 
 [![Crates.io][crates-badge]][crates-url]
-[![Docs.rs][docs-badge]][docs-url]
+<!-- [![CodeCov.io][codecov-badge]][codecov-url] -->
 [![Build Status][actions-badge]][actions-url]
 
 <!-- add pypi badge first -->
