@@ -3,7 +3,6 @@ name: Release
 
 on:
   push:
-  pull_request:
 
 env:
   CARGO_TERM_COLOR: always
@@ -23,7 +22,6 @@ jobs:
   # bump the version and make a tag.
   BumpVersion:
     runs-on: ubuntu-latest
-    #if: "startsWith(github.ref, 'refs/tags/')"
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
@@ -48,6 +46,7 @@ jobs:
   # anyway so there's no point to run tests a third time.
   BuildLinux:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
     steps:
     - uses: actions/checkout@v2
@@ -86,6 +85,7 @@ jobs:
 
   BuildWindows:
     runs-on: windows-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
     steps:
     - uses: actions/checkout@v2
@@ -116,6 +116,7 @@ jobs:
 
   BuildMacOS:
     runs-on: macos-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
     steps:
     - uses: actions/checkout@v2
