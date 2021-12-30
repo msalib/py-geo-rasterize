@@ -4,11 +4,30 @@ build-backend = "maturin"
 
 [project]
 name = "geo-rasterize"
+version = "0.0.1"
+description = "a 2D rasterizer for geospatial applications, written in Rust"
+readme = "README.md"
+license = {file = "LICENSE-APACHE"}
+keywords = ["geospatial", "gis", "geo", "raster", "geographic"]
+authors = [{name = "Michael Salib", email = "msalib@gmail.com"}]
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
-]
+    "Development Status :: 4 - Beta",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"]
+dependencies = [
+    "numpy>=1.16",
+    "shapely>=1.6"]
+homepage = "https://github.com/msalib/py-geo-rasterize"
 
 

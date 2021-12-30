@@ -1,5 +1,5 @@
 //#![doc = include_str!("../README.md")]
-use std::{convert::TryInto, io::Cursor};
+use std::io::Cursor;
 
 use anyhow::Result;
 use geo_rasterize::{BinaryBuilder, LabelBuilder, MergeAlgorithm, Transform};
@@ -77,6 +77,7 @@ macro_rules! handle_type {
 #[pyo3(
     text_signature = "(shapes, foregrounds, output_shape, background = None, dtype = None, algorithm = 'replace', geo_to_pix = None)"
 )]
+#[allow(clippy::too_many_arguments)]
 fn rasterize<'a>(
     py: Python<'a>,
     shapes: &PySequence,
@@ -87,7 +88,7 @@ fn rasterize<'a>(
     algorithm: Option<&str>,
     geo_to_pix: Option<[f64; 6]>,
 ) -> PyResult<&'a PyAny> {
-    let shape_count: usize = shapes.len()?.try_into()?;
+    let shape_count: usize = shapes.len()?;
     if shape_count != foregrounds.len()? {
         return Err(PyValueError::new_err(format!(
             "the number of shapes ({}) must match the number of foreground elements ({})",
