@@ -6,17 +6,116 @@ on:
   pull_request:
     branches: [ main ]
 
-jobs:
 
-  # This runs all the time except when we're pushing to main; we've
-  # already run tests in the PR and after we increment the semantic
-  # release number, we're going to run tests on that commit anyway so
-  # there's no point to run tests a third time.
-  Build:
+env:
+  CARGO_TERM_COLOR: always
+  # https://matklad.github.io/2021/09/04/fast-rust-builds.html
+  # indicates that non-incremental builds improve CI performance.
+  CARGO_INCREMENTAL: 0
+  # Since we're not shipping any build artifacts, turning off debug
+  # symbols will speed things up without hurting anything.
+  RUSTFLAGS: '-C debuginfo=0'
+
+# All the build jobs except linux specify no-sdist so we only build it
+# once. The linux job is also special since that's the only one in
+# which we run clippy.
+
+jobs:
+  # These Build* jobs run all the time except when we're pushing to
+  # main; we've already run tests in the PR and after we increment the
+  # semantic release number, we're going to run tests on that commit
+  # anyway so there's no point to run tests a third time.
+  BuildLinux:
+    runs-on: ubuntu-latest
     if: "!(github.ref == 'refs/heads/main' && github.event_name == 'push')"
-    uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
-    with:
-      ref: ${GITHUB_REF_NAME}
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        args: --all-features
+
+    # Looks like cargo-bloat-action won't be working for us anytime
+    # soon unfortunately....
+    # - name: cargo bloat
+    #   uses: orf/cargo-bloat-action@v1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: maturin build
+      uses: messense/maturin-action@v1
+      with:
+        manylinux: manylinux2014
+        command: build
+        args: --release --strip -o dist
+
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+        retention-days: 2
+
+  BuildWindows:
+    runs-on: windows-latest
+    if: "!(github.ref == 'refs/heads/main' && github.event_name == 'push')"
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - uses: messense/maturin-action@v1
+      with:
+        command: build
+        args: --release --strip --no-sdist -o dist
+
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+        retention-days: 2
+
+  BuildMacOS:
+    runs-on: macos-latest
+    if: "!(github.ref == 'refs/heads/main' && github.event_name == 'push')"
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - uses: messense/maturin-action@v1
+      with:
+        command: build
+        args: --release --strip --no-sdist -o dist --universal2
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+        retention-days: 2
 
   # This only runs when we push to main. Instead of running tests, we
   # bump the version and make a tag.
@@ -40,7 +139,7 @@ jobs:
   Publish:
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [ Build ]
+    needs: [ BuildLinux, BuildWindows, BuildMacOS ]
     steps:
       - uses: actions/download-artifact@v2
         with:
