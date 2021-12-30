@@ -26,7 +26,6 @@ jobs:
   # anyway so there's no point to run tests a third time.
   BuildLinux:
     runs-on: ubuntu-latest
-    if: "!startsWith(github.ref, 'refs/tags/')"
     steps:
     - uses: actions/checkout@v2
 
@@ -64,7 +63,6 @@ jobs:
 
   BuildWindows:
     runs-on: windows-latest
-    if: "!startsWith(github.ref, 'refs/tags/')"
     steps:
     - uses: actions/checkout@v2
 
@@ -94,7 +92,6 @@ jobs:
 
   BuildMacOS:
     runs-on: macos-latest
-    if: "!startsWith(github.ref, 'refs/tags/')"
     steps:
     - uses: actions/checkout@v2
 
