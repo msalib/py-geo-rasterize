@@ -21,6 +21,8 @@ at all)! Plus `geo-rasterize`'s rasterization algorithm is based on
 GDAL's so it should be a drop in replacement for
 `rasterio.features.rasterize` and it offers a very similar API.
 
+<!-- add table showing platforms and build statuses -->
+
 ## Examples
 
 For example, let's rasterize a single `Point` located at `(x=1, y=2)`

@@ -41,14 +41,8 @@ jobs:
         command: build
         args: --release --strip -o dist
 
-    # - name: install dependencies
-    #   run: pip install --user numpy>=1.16 shapely>=1.6
-
-    # - name: install locally built wheel
-    #   run: pip install --user geo-rasterize --no-index --find-links dist --force-reinstall
-
     - name: install locally built wheel
-      run: pip install --user dist/*.whl --force-reinstall
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
 
     - name: run doctests
       run: python -m doctest -v README.md
@@ -87,19 +81,27 @@ jobs:
         name: wheels
         path: dist
 
-  # macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: messense/maturin-action@v1
-  #     with:
-  #       command: build
-  #       args: --release --no-sdist -o dist --universal2
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - uses: messense/maturin-action@v1
+      with:
+        command: build
+        args: --release --no-sdist -o dist --universal2
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
 
   release:
     name: Release
@@ -119,3 +121,5 @@ jobs:
           args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
 
 
+
+# put release in a separate file consisting of a python-semantic-release version job that outputs a ref followed by parallel build jobs for each platform followed by the upload job
