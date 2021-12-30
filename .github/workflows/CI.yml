@@ -59,19 +59,33 @@ jobs:
         name: wheels
         path: dist
 
-  # windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: messense/maturin-action@v1
-  #     with:
-  #       command: build
-  #       args: --release --no-sdist -o dist
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - uses: messense/maturin-action@v1
+      with:
+        command: build
+        args: --release --no-sdist -o dist
+
+    - name: install locally built wheel
+      run: pip install --user dist/*.whl --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
 
   # macos:
   #   runs-on: macos-latest
@@ -91,7 +105,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [ linux ]
+    needs: [ linux, windows ]
     steps:
       - uses: actions/download-artifact@v2
         with:

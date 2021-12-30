@@ -1,14 +1,10 @@
 # geo-rasterize: a 2D rasterizer for geospatial applications, written in Rust
 
-[![Crates.io][crates-badge]][crates-url]
-<!-- [![CodeCov.io][codecov-badge]][codecov-url] -->
+[![PyPI][pypi-badge]][pypi-url]
 [![Build Status][actions-badge]][actions-url]
 
-<!-- add pypi badge first -->
-[crates-badge]: https://img.shields.io/crates/v/py-geo-rasterize.svg
-[crates-url]: https://crates.io/crates/py-geo-rasterize
-[codecov-badge]: https://img.shields.io/codecov/c/github/msalib/py-geo-rasterize
-[codecov-url]: https://app.codecov.io/gh/msalib/py-geo-rasterize/
+[pypi-badge]: https://img.shields.io/pypi/pyversions/geo-rasterize
+[pypi-url]: https://pypi.org/project/geo-rasterize/
 [actions-badge]: https://github.com/msalib/py-geo-rasterize/actions/workflows/CI.yml/badge.svg
 [actions-url]: https://github.com/msalib/py-geo-rasterize/actions?query=CI+branch%3Amain
 
