@@ -26,6 +26,7 @@ jobs:
   # anyway so there's no point to run tests a third time.
   BuildLinux:
     runs-on: ubuntu-latest
+    if: "!github.ref == 'refs/heads/main' && github.event_name == 'push'"
     steps:
     - uses: actions/checkout@v2
 
@@ -63,6 +64,7 @@ jobs:
 
   BuildWindows:
     runs-on: windows-latest
+    if: "!github.ref == 'refs/heads/main' && github.event_name == 'push'"
     steps:
     - uses: actions/checkout@v2
 
@@ -92,6 +94,7 @@ jobs:
 
   BuildMacOS:
     runs-on: macos-latest
+    if: "!github.ref == 'refs/heads/main' && github.event_name == 'push'"
     steps:
     - uses: actions/checkout@v2
 
