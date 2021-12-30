@@ -31,13 +31,13 @@ every pixel the point touches:
 ```python
 >>> from shapely.geometry import Point
 >>> from geo_rasterize import rasterize
->>> rasterize([Point(1, 2)], [1], (5, 6))
-array([[0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0]])
+>>> print(rasterize([Point(1, 2)], [1], (5, 6)))
+[[0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 1 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]]
 
 ```
 
@@ -51,12 +51,15 @@ So let's see multiple shapes!
 ```python
 >>> from shapely.geometry import Point, LineString
 >>> from geo_rasterize import rasterize
->>> rasterize([Point(3, 4), LineString([(0, 3), (3, 0)])], [3, 7], (4, 5))
-array([[0, 0, 7, 0],
-       [0, 7, 7, 0],
-       [7, 7, 0, 0],
-       [7, 0, 0, 0],
-       [0, 0, 0, 3]])
+>>> shapes = [Point(3, 4), LineString([(0, 3), (3, 0)])]
+>>> foregrounds = [3, 7]
+>>> raster_size = (4, 5)
+>>> print(rasterize(shapes, foregrounds, raster_size))
+[[0 0 7 0]
+ [0 7 7 0]
+ [7 7 0 0]
+ [7 0 0 0]
+ [0 0 0 3]]
 
 ```
 
@@ -70,12 +73,12 @@ foreground values will sum. That allows you to make heatmaps!
 >>> from shapely.geometry import Point, LineString
 >>> from geo_rasterize import rasterize
 >>> shapes = [LineString([(0, 0), (5, 5)]), LineString([(5, 0), (0, 5)])]
->>> rasterize(shapes, [1, 1], (5, 5), algorithm='add')
-array([[1, 0, 0, 0, 1],
-       [0, 1, 0, 1, 1],
-       [0, 0, 2, 1, 0],
-       [0, 1, 1, 1, 0],
-       [1, 1, 0, 0, 1]])
+>>> print(rasterize(shapes, [1, 1], (5, 5), algorithm='add'))
+[[1 0 0 0 1]
+ [0 1 0 1 1]
+ [0 0 2 1 0]
+ [0 1 1 1 0]
+ [1 1 0 0 1]]
 
 ```
 
