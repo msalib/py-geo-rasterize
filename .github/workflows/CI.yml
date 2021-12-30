@@ -41,11 +41,14 @@ jobs:
         command: build
         args: --release --strip -o dist
 
-    - name: install dependencies
-      run: pip install --user numpy>=1.16 shapely>=1.6
+    # - name: install dependencies
+    #   run: pip install --user numpy>=1.16 shapely>=1.6
+
+    # - name: install locally built wheel
+    #   run: pip install --user geo-rasterize --no-index --find-links dist --force-reinstall
 
     - name: install locally built wheel
-      run: pip install --user geo-rasterize --no-index --find-links dist --force-reinstall
+      run: pip install --user dist/*.whl --force-reinstall
 
     - name: run doctests
       run: python -m doctest -v README.md
