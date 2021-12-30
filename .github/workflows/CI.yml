@@ -13,7 +13,7 @@ jobs:
   # release number, we're going to run tests on that commit anyway so
   # there's no point to run tests a third time.
   Build:
-    if: !( github.ref == 'refs/heads/main' && github.event_name == 'push' )
+    if: "!(github.ref == 'refs/heads/main' && github.event_name == 'push')"
     uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
     with:
       ref: ${GITHUB_REF_NAME}
