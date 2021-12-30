@@ -41,6 +41,9 @@ jobs:
         command: build
         args: --release --strip -o dist
 
+    - name: install dependencies
+      run: pip install numpy>=1.16 shapely>=1.6
+
     - name: install locally built wheel
       run: pip install geo-rasterize --no-index --find-links dist --force-reinstall
 
