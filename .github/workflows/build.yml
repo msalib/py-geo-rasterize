@@ -2,10 +2,6 @@ name: BuildAll
 
 on:
   workflow_call:
-    inputs:
-      ref:
-        required: true
-        type: string
 
 env:
   CARGO_TERM_COLOR: always
@@ -25,8 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        ref: ${{ inputs.ref }}
 
     - uses: actions-rs/clippy-check@v1
       with:
@@ -64,8 +58,6 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        ref: ${{ inputs.ref }}
 
     - uses: actions-rs/toolchain@v1
       with:
@@ -95,8 +87,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        ref: ${{ inputs.ref }}
 
     - uses: actions-rs/toolchain@v1
       with:
