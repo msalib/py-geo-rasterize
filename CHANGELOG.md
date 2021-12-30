@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2021-12-30)
+### Feature
+* We really are getting closer to better CI ([#8](https://github.com/msalib/py-geo-rasterize/issues/8)) ([`85a2a29`](https://github.com/msalib/py-geo-rasterize/commit/85a2a295091202e2049519f8931cc820b452f4b2))
+
 ## v0.4.0 (2021-12-30)
 ### Feature
 * More semver joy ([#7](https://github.com/msalib/py-geo-rasterize/issues/7)) ([`5707289`](https://github.com/msalib/py-geo-rasterize/commit/57072894e4a74d91e9bb3e856bfafd42a17e3e29))
