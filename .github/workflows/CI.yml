@@ -8,29 +8,27 @@ on:
 
 jobs:
 
-  build:
-    name: Build
+  Build:
     uses: msalib/py-geo-rasterize/.github/workflows/build.yml@main
     with:
       ref: ${{ env.GITHUB_REF_NAME }}
 
 
-  # release:
-  #   name: Release
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #   needs: [ linux, windows, macos ]
-  #   steps:
-  #     - uses: actions/download-artifact@v2
-  #       with:
-  #         name: wheels
-  #     - name: Publish to PyPI
-  #       uses: messense/maturin-action@v1
-  #       env:
-  #         MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-  #       with:
-  #         command: upload
-  #         args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
+  Release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [ Build ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: wheels
+      - name: Publish to PyPI
+        uses: messense/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
 
 
 
