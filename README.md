@@ -5,8 +5,8 @@
 
 [pypi-badge]: https://img.shields.io/pypi/pyversions/geo-rasterize
 [pypi-url]: https://pypi.org/project/geo-rasterize/
-[actions-badge]: https://github.com/msalib/py-geo-rasterize/actions/workflows/CI.yml/badge.svg
-[actions-url]: https://github.com/msalib/py-geo-rasterize/actions?query=CI+branch%3Amain
+[actions-badge]: https://github.com/msalib/py-geo-rasterize/actions/workflows/Release.yml/badge.svg
+[actions-url]: https://github.com/msalib/py-geo-rasterize/actions?query=Release+branch%3Amain
 
 `geo-rasterize` is a Python wrapper for a [rust library with the same
 name](https://crates.io/crates/geo-rasterize) that rasterizes
@@ -16,12 +16,22 @@ vector shapes, just like
 [features.rasterize](https://rasterio.readthedocs.io/en/latest/api/rasterio.features.html#rasterio.features.rasterize). The
 difference is that while [rasterio](https://rasterio.readthedocs.io/)
 is built on GDAL, this library has no dependencies -- you can install
-this wheel without having to worry about GDAL (or any other C library
-at all)! Plus `geo-rasterize`'s rasterization algorithm is based on
-GDAL's so it should be a drop in replacement for
-`rasterio.features.rasterize` and it offers a very similar API.
+it without having to worry about GDAL (or any other C library at all)!
+Plus `geo-rasterize`'s rasterization algorithm is based on GDAL's so
+it should be a drop in replacement for `rasterio.features.rasterize`
+and it offers a very similar API.
 
-<!-- add table showing platforms and build statuses -->
+We publish wheels to PyPI Python 3.7+ for the following platforms:
+
+| Operating System | Architecture                    |
+|------------------|---------------------------------|
+| Linux            | x86-64                          |
+| Linux            | i686                            |
+| Linux            | aarch64                         |
+| Windows          | x86-64                          |
+| Windows          | i686                            |
+| MacOS            | Universal2 (x86-64 and aarch64) |
+
 
 ## Examples
 

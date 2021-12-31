@@ -24,6 +24,9 @@ jobs:
   # anyway so there's no point to run tests a third time.
   BuildLinux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64, i686]
     steps:
     - uses: actions/checkout@v2
 
@@ -42,6 +45,7 @@ jobs:
     - name: maturin build
       uses: messense/maturin-action@v1
       with:
+        target: ${{ matrix.target }}
         manylinux: manylinux2014
         command: build
         args: --release --strip -o dist
@@ -61,6 +65,9 @@ jobs:
 
   BuildWindows:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        target: [x64, x86]
     steps:
     - uses: actions/checkout@v2
 
@@ -70,16 +77,24 @@ jobs:
         toolchain: stable
         override: true
 
+    # on x86, there's a good python installed but it is an x64 beast
+    # so it cannot install our wheel.
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        architecture: ${{ matrix.target }}
+
     - uses: messense/maturin-action@v1
       with:
+        target: ${{ matrix.target }}
         command: build
         args: --release --strip --no-sdist -o dist
 
     - name: install locally built wheel
-      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+      run: pip3 install --user --find-links dist geo_rasterize --force-reinstall
 
     - name: run doctests
-      run: python -m doctest -v README.md
+      run: python3 -m doctest -v README.md
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
@@ -103,6 +118,12 @@ jobs:
       with:
         command: build
         args: --release --strip --no-sdist -o dist --universal2
+
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2

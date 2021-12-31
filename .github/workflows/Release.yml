@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
+    strategy:
+      matrix:
+        target: [x86_64, i686]
     steps:
     - uses: actions/checkout@v2
 
@@ -66,6 +69,7 @@ jobs:
     - name: maturin build
       uses: messense/maturin-action@v1
       with:
+        target: ${{ matrix.target }}
         manylinux: manylinux2014
         command: build
         args: --release --strip -o dist
@@ -87,6 +91,9 @@ jobs:
     runs-on: windows-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
+    strategy:
+      matrix:
+        target: [x64, x86]
     steps:
     - uses: actions/checkout@v2
 
@@ -96,8 +103,16 @@ jobs:
         toolchain: stable
         override: true
 
+    # on x86, there's a good python installed but it is an x64 beast
+    # so it cannot install our wheel.
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        architecture: ${{ matrix.target }}
+
     - uses: messense/maturin-action@v1
       with:
+        target: ${{ matrix.target }}
         command: build
         args: --release --strip --no-sdist -o dist
 
@@ -132,6 +147,12 @@ jobs:
         command: build
         args: --release --strip --no-sdist -o dist --universal2
 
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+
+    - name: run doctests
+      run: python -m doctest -v README.md
+
     - name: Upload wheels
       uses: actions/upload-artifact@v2
       with:
@@ -139,11 +160,54 @@ jobs:
         path: dist
         retention-days: 2
 
+  BuildLinuxCross:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    strategy:
+      matrix:
+        # there's less point in building these architectures since
+        # `shapely` doesn't have pre-built wheels available for them.
+        target: [aarch64]  # armv7, s390x, ppc64le, ppc64
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Build Wheels
+      uses: messense/maturin-action@v1
+      with:
+        target: ${{ matrix.target }}
+        manylinux: auto
+        args: --release --strip --out dist --no-sdist
+    - uses: uraimo/run-on-arch-action@v2.0.5
+      if: matrix.target != 'ppc64'
+      name: Install built wheel
+      with:
+        arch: ${{ matrix.target }}
+        distro: ubuntu20.04
+        githubToken: ${{ github.token }}
+        # Mount the dist directory as /artifacts in the container
+        dockerRunArgs: |
+          --volume "${PWD}/dist:/artifacts"
+        install: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 python3-pip
+          pip3 install -U pip
+        run: |
+          ls -lrth /artifacts
+          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
+          python3 -m doctest -v README.md
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+
   # We've got a new version! `Build` will run and after it finishes we
   # can publish!
   Publish:
     runs-on: ubuntu-latest
-    needs: [ BuildLinux, BuildWindows, BuildMacOS ]
+    needs: [ BuildLinux, BuildWindows, BuildMacOS, BuildLinuxCross ]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -151,7 +215,7 @@ jobs:
       - name: Publish to PyPI
         uses: messense/maturin-action@v1
         env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          MATURIN_PYPI_TOKEN: ${{ secrets.PROD_PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --repository-url=https://test.pypi.org/legacy/ --username=msalib --skip-existing *
+          args: --username=msalib --skip-existing *
