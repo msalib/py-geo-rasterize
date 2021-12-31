@@ -147,6 +147,7 @@ jobs:
 
   BuildLinuxCross:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     strategy:
       matrix:
         target: [aarch64, armv7]  # s390x, ppc64le, ppc64
@@ -177,7 +178,7 @@ jobs:
           pip3 install -U pip
         run: |
           ls -lrth /artifacts
-          pip3 install geo_rasterize --user --find-links /artifacts --force-reinstall
+          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
           python3 -m doctest -v README.md
     - name: Upload wheels
       uses: actions/upload-artifact@v2
