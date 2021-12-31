@@ -9,7 +9,8 @@ name = "geo_rasterize"
 crate-type = ["cdylib"]
 
 [dependencies]
-# we depend on 3.7+ because 3.6 just went EOL
+# we want to depend on 3.7+ because 3.6 just went EOL but our CI needs
+# 3.6 because that's what ships with Ubuntu 18.04
 pyo3 = { version = "0.15", features = ["extension-module", "anyhow", "abi3-py37"] }
 geo-rasterize = "0.1.1"
 numpy = "0.15"

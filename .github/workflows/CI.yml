@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [aarch64, armv7]  # s390x, ppc64le, ppc64
+        target: [aarch64] #, armv7]  # s390x, ppc64le, ppc64
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -139,7 +139,7 @@ jobs:
       name: Install built wheel
       with:
         arch: ${{ matrix.target }}
-        distro: ubuntu18.04
+        distro: ubuntu20.04
         githubToken: ${{ github.token }}
         # Mount the dist directory as /artifacts in the container
         dockerRunArgs: |
@@ -150,11 +150,10 @@ jobs:
           pip3 install -U pip
         run: |
           ls -lrth /artifacts
-          pip3 install --user /artifacts/*.whl --force-reinstall
+          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
           python3 -m doctest -v README.md
     - name: Upload wheels
       uses: actions/upload-artifact@v2
       with:
         name: wheels
         path: dist
-#          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
