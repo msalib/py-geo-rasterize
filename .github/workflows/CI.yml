@@ -22,71 +22,79 @@ jobs:
   # main; we've already run tests in the PR and after we increment the
   # semantic release number, we're going to run tests on that commit
   # anyway so there's no point to run tests a third time.
-  # BuildLinux:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
+  BuildLinux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64, i686]
+    steps:
+    - uses: actions/checkout@v2
 
-  #   - uses: actions-rs/clippy-check@v1
-  #     with:
-  #       token: ${{ secrets.GITHUB_TOKEN }}
-  #       args: --all-features
+    - uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        args: --all-features
 
-  #   # Looks like cargo-bloat-action won't be working for us anytime
-  #   # soon unfortunately....
-  #   # - name: cargo bloat
-  #   #   uses: orf/cargo-bloat-action@v1
-  #   #   with:
-  #   #     token: ${{ secrets.GITHUB_TOKEN }}
+    # Looks like cargo-bloat-action won't be working for us anytime
+    # soon unfortunately....
+    # - name: cargo bloat
+    #   uses: orf/cargo-bloat-action@v1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
 
-  #   - name: maturin build
-  #     uses: messense/maturin-action@v1
-  #     with:
-  #       manylinux: manylinux2014
-  #       command: build
-  #       args: --release --strip -o dist
+    - name: maturin build
+      uses: messense/maturin-action@v1
+      with:
+        target: ${{ matrix.target }}
+        manylinux: manylinux2014
+        command: build
+        args: --release --strip -o dist
 
-  #   - name: install locally built wheel
-  #     run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
 
-  #   - name: run doctests
-  #     run: python -m doctest -v README.md
+    - name: run doctests
+      run: python -m doctest -v README.md
 
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
-  #       retention-days: 2
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+        retention-days: 2
 
-  # BuildWindows:
-  #   runs-on: windows-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
+  BuildWindows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        target: [x64, x86]
+    steps:
+    - uses: actions/checkout@v2
 
-  #   - uses: actions-rs/toolchain@v1
-  #     with:
-  #       profile: minimal
-  #       toolchain: stable
-  #       override: true
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
 
-  #   - uses: messense/maturin-action@v1
-  #     with:
-  #       command: build
-  #       args: --release --strip --no-sdist -o dist
+    - uses: messense/maturin-action@v1
+      with:
+        target: ${{ matrix.target }}
+        command: build
+        args: --release --strip --no-sdist -o dist
 
-  #   - name: install locally built wheel
-  #     run: pip install --user --find-links=dist geo_rasterize --force-reinstall
+    - name: install locally built wheel
+      run: pip install --user --find-links=dist geo_rasterize --force-reinstall
 
-  #   - name: run doctests
-  #     run: python -m doctest -v README.md
+    - name: run doctests
+      run: python -m doctest -v README.md
 
-  #   - name: Upload wheels
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: wheels
-  #       path: dist
-  #       retention-days: 2
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+        retention-days: 2
 
   # BuildMacOS:
   #   runs-on: macos-latest
@@ -118,42 +126,46 @@ jobs:
   #       retention-days: 2
 
 
-  BuildLinuxCross:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [armv7] #, armv7]  # s390x, ppc64le, ppc64
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Build Wheels
-      uses: messense/maturin-action@v1
-      with:
-        target: ${{ matrix.target }}
-        manylinux: auto
-        args: --release --strip --out dist --no-sdist
-    - uses: uraimo/run-on-arch-action@v2.0.5
-      if: matrix.target != 'ppc64'
-      name: Install built wheel
-      with:
-        arch: ${{ matrix.target }}
-        distro: ubuntu20.04
-        githubToken: ${{ github.token }}
-        # Mount the dist directory as /artifacts in the container
-        dockerRunArgs: |
-          --volume "${PWD}/dist:/artifacts"
-        install: |
-          apt-get update
-          apt-get install -y --no-install-recommends python3 python3-pip
-          pip3 install -U pip
-        run: |
-          ls -lrth /artifacts
-          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
-          python3 -m doctest -v README.md
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+
+
+
+
+  # BuildLinuxCross:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       target: [armv7] #, armv7]  # s390x, ppc64le, ppc64
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/setup-python@v2
+  #     with:
+  #       python-version: 3.9
+  #   - name: Build Wheels
+  #     uses: messense/maturin-action@v1
+  #     with:
+  #       target: ${{ matrix.target }}
+  #       manylinux: auto
+  #       args: --release --strip --out dist --no-sdist
+  #   - uses: uraimo/run-on-arch-action@v2.0.5
+  #     if: matrix.target != 'ppc64'
+  #     name: Install built wheel
+  #     with:
+  #       arch: ${{ matrix.target }}
+  #       distro: ubuntu20.04
+  #       githubToken: ${{ github.token }}
+  #       # Mount the dist directory as /artifacts in the container
+  #       dockerRunArgs: |
+  #         --volume "${PWD}/dist:/artifacts"
+  #       install: |
+  #         apt-get update
+  #         apt-get install -y --no-install-recommends python3 python3-pip
+  #         pip3 install -U pip
+  #       run: |
+  #         ls -lrth /artifacts
+  #         pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
+  #         python3 -m doctest -v README.md
+  #   - name: Upload wheels
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: wheels
+  #       path: dist

@@ -150,7 +150,9 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     strategy:
       matrix:
-        target: [aarch64, armv7]  # s390x, ppc64le, ppc64
+        # there's less point in building these architectures since
+        # `shapely` doesn't have pre-built wheels available for them.
+        target: [aarch64]  # armv7, s390x, ppc64le, ppc64
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
