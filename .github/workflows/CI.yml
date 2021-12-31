@@ -77,15 +77,19 @@ jobs:
         toolchain: stable
         override: true
 
+    # on x86, there's a good python installed but it is an x64 beast
+    # so it cannot install our wheel.
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        architecture: ${{ matrix.target }}
+
     - uses: messense/maturin-action@v1
       with:
         target: ${{ matrix.target }}
         command: build
         args: --release --strip --no-sdist -o dist
 
-    - run: python --version
-    - run: ls dist
-    - run: pip debug --verbose
     - name: install locally built wheel
       run: pip3 install -v -v -v --user --find-links dist geo_rasterize --force-reinstall
 
