@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.0 (2021-12-31)
+### Feature
+* Ensure that LinuxCross release build follows semver ([#15](https://github.com/msalib/py-geo-rasterize/issues/15)) ([`c6a4f32`](https://github.com/msalib/py-geo-rasterize/commit/c6a4f32e8ecb84e51698044044ccf9c1eed72155))
+* Add cross compiling and switch to prod pypi ([#14](https://github.com/msalib/py-geo-rasterize/issues/14)) ([`42d46cd`](https://github.com/msalib/py-geo-rasterize/commit/42d46cdf28bef809561747611f9b9232c15dd221))
+
 ## v0.7.0 (2021-12-30)
 ### Feature
 * More CI fun ([#13](https://github.com/msalib/py-geo-rasterize/issues/13)) ([`a2c69ab`](https://github.com/msalib/py-geo-rasterize/commit/a2c69abd218f2a7e8b395f1873d237185cd18355))
