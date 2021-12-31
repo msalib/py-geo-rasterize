@@ -91,6 +91,9 @@ jobs:
     runs-on: windows-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [ BumpVersion ]
+    strategy:
+      matrix:
+        target: [x64, x86]
     steps:
     - uses: actions/checkout@v2
 
@@ -100,8 +103,16 @@ jobs:
         toolchain: stable
         override: true
 
+    # on x86, there's a good python installed but it is an x64 beast
+    # so it cannot install our wheel.
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        architecture: ${{ matrix.target }}
+
     - uses: messense/maturin-action@v1
       with:
+        target: ${{ matrix.target }}
         command: build
         args: --release --strip --no-sdist -o dist
 

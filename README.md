@@ -16,10 +16,10 @@ vector shapes, just like
 [features.rasterize](https://rasterio.readthedocs.io/en/latest/api/rasterio.features.html#rasterio.features.rasterize). The
 difference is that while [rasterio](https://rasterio.readthedocs.io/)
 is built on GDAL, this library has no dependencies -- you can install
-this wheel without having to worry about GDAL (or any other C library
-at all)! Plus `geo-rasterize`'s rasterization algorithm is based on
-GDAL's so it should be a drop in replacement for
-`rasterio.features.rasterize` and it offers a very similar API.
+it without having to worry about GDAL (or any other C library at all)!
+Plus `geo-rasterize`'s rasterization algorithm is based on GDAL's so
+it should be a drop in replacement for `rasterio.features.rasterize`
+and it offers a very similar API.
 
 We publish wheels to PyPI Python 3.7+ for the following platforms:
 
@@ -31,6 +31,7 @@ We publish wheels to PyPI Python 3.7+ for the following platforms:
 | Windows          | x86-64                          |
 | Windows          | i686                            |
 | MacOS            | Universal2 (x86-64 and aarch64) |
+
 
 ## Examples
 
