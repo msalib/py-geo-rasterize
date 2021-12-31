@@ -161,7 +161,7 @@ jobs:
       with:
         target: ${{ matrix.target }}
         manylinux: auto
-        args: --release --out dist --no-sdist
+        args: --release --strip --out dist --no-sdist
     - uses: uraimo/run-on-arch-action@v2.0.5
       if: matrix.target != 'ppc64'
       name: Install built wheel

@@ -133,7 +133,7 @@ jobs:
       with:
         target: ${{ matrix.target }}
         manylinux: auto
-        args: --release --out dist --no-sdist
+        args: --release --strip --out dist --no-sdist
     - uses: uraimo/run-on-arch-action@v2.0.5
       if: matrix.target != 'ppc64'
       name: Install built wheel
@@ -150,10 +150,11 @@ jobs:
           pip3 install -U pip
         run: |
           ls -lrth /artifacts
-          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
+          pip3 install --user /artifacts/*.whl --force-reinstall
           python3 -m doctest -v README.md
     - name: Upload wheels
       uses: actions/upload-artifact@v2
       with:
         name: wheels
         path: dist
+#          pip3 install --user --find-links=/artifacts geo_rasterize --force-reinstall
