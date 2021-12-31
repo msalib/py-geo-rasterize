@@ -86,7 +86,7 @@ jobs:
     - run: python --version
     - run: ls dist
     - name: install locally built wheel
-      run: pip3 install --user --find-links=dist geo_rasterize --force-reinstall
+      run: pip3 install -v -v -v --user --find-links dist geo_rasterize --force-reinstall
 
     - name: run doctests
       run: python3 -m doctest -v README.md
