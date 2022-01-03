@@ -1,0 +1,2 @@
+# this just makes it so that Cargo.lock doesn't show up in diffs
+Cargo.lock -diff
