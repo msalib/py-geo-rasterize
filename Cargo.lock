@@ -118,16 +118,15 @@ dependencies = [
 
 [[package]]
 name = "geo-rasterize"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb336b31404dd654962a5db67082b7bd330914adea6903c378059c10ba78c948"
+checksum = "d10587aa478d06c81302daaf7346fbb12bb33b858b330008ee1dee3619004450"
 dependencies = [
  "euclid",
  "geo",
  "itertools",
  "ndarray",
  "num-traits",
- "smallvec",
  "thiserror",
 ]
 
