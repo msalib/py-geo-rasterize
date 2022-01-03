@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.0 (2022-01-03)
+### Feature
+* Update to v0.1.2 of the rust geo-rasterize ([#16](https://github.com/msalib/py-geo-rasterize/issues/16)) ([`4fdc268`](https://github.com/msalib/py-geo-rasterize/commit/4fdc26838c95eb84764776a3a4342c7dc46b6006))
+
 ## v0.8.0 (2021-12-31)
 ### Feature
 * Ensure that LinuxCross release build follows semver ([#15](https://github.com/msalib/py-geo-rasterize/issues/15)) ([`c6a4f32`](https://github.com/msalib/py-geo-rasterize/commit/c6a4f32e8ecb84e51698044044ccf9c1eed72155))
