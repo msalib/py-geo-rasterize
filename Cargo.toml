@@ -14,7 +14,7 @@ pyo3 = { version = "0.15", features = ["extension-module", "anyhow", "abi3-py37"
 geo-rasterize = "0.1.2"
 numpy = "0.15"
 geo-types = "0.7.2"
-ndarray = "0.15.3"
+ndarray = "0.15.6"
 wkb = "0.7.1"
 anyhow = "1.0.42"
 
