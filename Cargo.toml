@@ -16,5 +16,5 @@ numpy = "0.15"
 geo-types = "0.7.2"
 ndarray = "0.15.3"
 wkb = "0.7.1"
-anyhow = "1.0.42"
+anyhow = "1.0.61"
 
